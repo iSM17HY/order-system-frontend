@@ -1,7 +1,16 @@
 import React, { Component } from 'react';
 import { Table } from 'semantic-ui-react';
+import './index.css';
 
 class OrderProduct extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            total: this.props.myProp[0]['price'],
+            productSelectId: 1,
+        };
+    }
 
     sendBackData = (e) => {
 
@@ -9,6 +18,12 @@ class OrderProduct extends Component {
             productId: this.productSelect.value,
             quantity: this.quantitySelect.value
         }
+
+        this.setState({
+            total: (this.props.myProp[this.productSelect.value]['price'] * this.quantitySelect.value).toFixed(2)
+        })
+
+        console.log(this.productSelect.value)
 
         this.props.parentCallback(this.props.elementIndex, selectState)
     }
@@ -24,13 +39,14 @@ class OrderProduct extends Component {
             <tr>
                 <td>Product</td>
                 <td>Quantity</td>
+                <td>total</td>
             </tr>
             </thead>
             <tbody>
             <tr>
                 <td>
-                    <select className={'product-select'} onChange={this.sendBackData} ref = {(input)=> this.productSelect = input}>
-                        {this.props.myProp.products.map(
+                    <select className={'product-select'} defaultValue={this.state.productSelectId} onChange={this.sendBackData} ref = {(input)=> this.productSelect = input}>
+                        {this.props.myProp.map(
                             product =>
                                 <option value={product.id}>{product.product_name}</option>
                         )}
@@ -43,9 +59,12 @@ class OrderProduct extends Component {
                         })}
                     </select>
                 </td>
+                <td>
+                    £{this.state.total}
+                </td>
             </tr>
-            </tbody>
-        </Table>
+                </tbody>
+            </Table>
         );
     }
 };

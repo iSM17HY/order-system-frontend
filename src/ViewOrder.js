@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Header, Message, Table } from 'semantic-ui-react';
 import { API_BASE_URL } from './config'
+import axios from "axios";
+import './index.css';
 
 class ViewOrder extends Component {
 
@@ -10,8 +12,10 @@ class ViewOrder extends Component {
 
         this.state = {
             order: currentOrder,
-            isLoading: null,
-            orderData: null,
+            isLoading: [],
+            products: [],
+            orderData: [],
+            customer: [],
         };
     }
 
@@ -20,21 +24,24 @@ class ViewOrder extends Component {
     }
 
     async getOrder() {
-        if (!this.state.orderData) {
+        if (!this.state.orderData.length) {
             try {
-
                 this.setState({
                     isLoading: true
                 });
 
-                const response = await fetch(API_BASE_URL + '/order?orderId=' + this.state.order, {});
+                axios.get(API_BASE_URL + '/order?orderId=' + this.state.order)
+                    .then(response => {
+                        this.setState({
+                            orderData: response.data.order,
+                            customer: response.data.customer,
+                            products: response.data.products,
+                            isLoading: false
+                        });
+                    })
 
-                const order = await response.json();
 
-                this.setState({
-                    order: order,
-                    isLoading: false
-                });
+                console.log(this.state.orderData)
 
             } catch (err) {
                 this.setState({
@@ -49,69 +56,70 @@ class ViewOrder extends Component {
 
     render() {
         return (
-            <div>
+            <div className={'content'}>
                 <div>
+                    <Header as="h1">Order Number: {this.state.orderData['order_number']}</Header>
                     <div>
-                        <Header as="h1">Orders</Header>
-                        <div>
-                            <Table>
-                                <thead>
-                                <tr>
-                                    <th>Order Number</th>
-                                    <th>Date</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>{this.state.orderData.order.order_number}</td>
-                                        <td>{this.state.orderData.order.order_date}</td>
+                        <Header as={'h2'} className={'table-header'}>Order</Header>
+                        <Table>
+                            <thead>
+                            <tr>
+                                <th>Order Number</th>
+                                <th>Date</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{this.state.orderData['order_number']}</td>
+                                <td>{this.state.orderData['order_date']}</td>
+                            </tr>
+                            </tbody>
+                        </Table>
+                    </div>
+                    <div>
+                        <Header as={'h2'} className={'table-header'}>Customer</Header>
+                        <Table>
+                            <thead>
+                            <tr>
+                                <th>Customer Number</th>
+                                <th>First Name</th>
+                                <th>Family Name</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{this.state.customer.id}</td>
+                                <td>{this.state.customer['firstname']}</td>
+                                <td>{this.state.customer['surname']}</td>
+                            </tr>
+                            </tbody>
+                        </Table>
+                    </div>
+                    <div>
+                        <Header as={'h2'} className={'table-header'}>Items</Header>
+                        <Table>
+                            <thead>
+                            <tr>
+                                <th>Item Number</th>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Price (per unit)</th>
+                                <th>Sub Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {this.state.products.map(
+                                product =>
+                                    <tr id={product.id} key={product.id}>
+                                        <td>{product.id}</td>
+                                        <td>{product.product_name}</td>
+                                        <td>{product.quantity}</td>
+                                        <td>£{product.product_cost}</td>
+                                        <td>£{product.quantity * product.product_cost}</td>
                                     </tr>
-                                </tbody>
-                            </Table>
-                        </div>
-                        <div>
-                            <Table>
-                                <thead>
-                                <tr>
-                                    <th>Customer Number</th>
-                                    <th>First Name</th>
-                                    <th>Family Name</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>{this.state.orderData.customer.id}</td>
-                                        <td>{this.state.orderData.customer.firstname}</td>
-                                        <td>{this.state.orderData.customer.surname}</td>
-                                    </tr>
-                                </tbody>
-                            </Table>
-                        </div>
-                        <div>
-                            <Table>
-                                <thead>
-                                <tr>
-                                    <th>Item Number</th>
-                                    <th>Description</th>
-                                    <th>Quantity</th>
-                                    <th>Price (per unit)</th>
-                                    <th>Sub Total</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {this.state.orderData.products.map(
-                                    product =>
-                                        <tr id={product.id} key={product.id}>
-                                            <td>{product.id}</td>
-                                            <td>{product.product_name}</td>
-                                            <td>{product.quantity}</td>
-                                            <td>£{product.product_cost}</td>
-                                            <td>£{product.quantity * product.product_cost}</td>
-                                        </tr>
-                                )}
-                                </tbody>
-                            </Table>
-                        </div>
+                            )}
+                            </tbody>
+                        </Table>
                     </div>
                 </div>
             </div>

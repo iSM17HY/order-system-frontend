@@ -10,7 +10,7 @@ export default class Navbar extends Component {
     render() {
         return (
             <div>
-                <Menu fixed="top" inverted>
+                <Menu fixed="top" style={{ position: 'relative'}} fixed inverted>
                     <Container>
                         <Menu.Item as="a" header href="/">
                             Home

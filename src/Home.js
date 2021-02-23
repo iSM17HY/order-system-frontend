@@ -3,13 +3,15 @@ import { API_BASE_URL } from './config'
 import Header from "semantic-ui-react/dist/commonjs/elements/Header";
 import Table from "semantic-ui-react/dist/commonjs/collections/Table";
 import Link from "react-router-dom/Link";
+import axios from 'axios';
+import './index.css';
 
 class Home extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            orders: null,
+            orders: [],
             isLoading: false
         };
     }
@@ -19,21 +21,20 @@ class Home extends Component {
     }
 
     async getOrders() {
-        if (!this.state.orders) {
+        if (!this.state.orders.length) {
             try {
 
                 this.setState({
                     isLoading: true
                 });
 
-                const response = await fetch(API_BASE_URL + '/orders', {});
-
-                const allOrders = await response.json();
-
-                this.setState({
-                    orders: allOrders,
-                    isLoading: false
-                });
+                axios.get(API_BASE_URL + '/orders')
+                    .then(response => {
+                        this.setState({
+                            orders: response.data,
+                            isLoading: false
+                        });
+                    })
 
             } catch (err) {
                 this.setState({
@@ -48,7 +49,7 @@ class Home extends Component {
 
     render() {
         return (
-            <div>
+            <div className={'content'}>
                 <Header as="h1">Orders</Header>
                 <div>
                     <Table>
