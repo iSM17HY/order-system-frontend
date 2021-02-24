@@ -20,14 +20,11 @@ class OrderProduct extends Component {
         }
 
         this.setState({
-            total: (this.props.myProp[this.productSelect.value]['price'] * this.quantitySelect.value).toFixed(2)
+            total: (this.props.myProp[(this.productSelect.value - 1)]['price'] * this.quantitySelect.value).toFixed(2)
         })
-
-        console.log(this.productSelect.value)
 
         this.props.parentCallback(this.props.elementIndex, selectState)
     }
-
 
     render() {
 

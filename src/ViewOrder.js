@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Header, Message, Table } from 'semantic-ui-react';
-import { API_BASE_URL } from './config'
 import axios from "axios";
 import './index.css';
+
+require('dotenv').config()
 
 class ViewOrder extends Component {
 
@@ -30,7 +31,7 @@ class ViewOrder extends Component {
                     isLoading: true
                 });
 
-                axios.get(API_BASE_URL + '/order?orderId=' + this.state.order)
+                axios.get(process.env.REACT_APP_API_BASE_URL + '/order?orderId=' + this.state.order)
                     .then(response => {
                         this.setState({
                             orderData: response.data.order,

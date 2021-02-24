@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { API_BASE_URL } from './config'
 import Header from "semantic-ui-react/dist/commonjs/elements/Header";
 import Table from "semantic-ui-react/dist/commonjs/collections/Table";
 import Link from "react-router-dom/Link";
 import axios from 'axios';
 import './index.css';
+
+require('dotenv').config()
 
 class Home extends Component {
 
@@ -28,7 +29,7 @@ class Home extends Component {
                     isLoading: true
                 });
 
-                axios.get(API_BASE_URL + '/orders')
+                axios.get(process.env.REACT_APP_API_BASE_URL + '/orders')
                     .then(response => {
                         this.setState({
                             orders: response.data,
